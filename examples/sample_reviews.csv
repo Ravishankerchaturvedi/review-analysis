@@ -1,0 +1,31 @@
+id,rating,text,synthetic
+r001,5,"Great value for the price and the build quality feels solid.",yes
+r002,2,"Shipping was slow and the package arrived damaged.",yes
+r003,4,"Easy to set up and the interface is intuitive.",yes
+r004,1,"Customer support never replied to my refund request.",yes
+r005,5,"Excellent quality, worth every penny.",yes
+r006,2,"Too expensive for what you get.",yes
+r007,4,"Delivery was fast and tracking worked well.",yes
+r008,1,"Product broke after two days of use.",yes
+r009,3,"Okay product, nothing special.",yes
+r010,5,"Support agent resolved my issue quickly.",yes
+r011,2,"Hard to use, instructions are confusing.",yes
+r012,4,"Good value and sturdy materials.",yes
+r013,1,"Shipping delay and no update from support.",yes
+r014,5,"Love the easy setup and clean design.",yes
+r015,2,"Cheap materials, feels flimsy.",yes
+r016,4,"Fast delivery and great price.",yes
+r017,1,"Refund process was painful and slow.",yes
+r018,5,"High quality and reliable so far.",yes
+r019,3,"Average, price is fair.",yes
+r020,4,"Customer service was helpful and polite.",yes
+r021,2,"Interface is confusing and buggy.",yes
+r022,5,"Great value, would buy again.",yes
+r023,1,"Arrived broken, terrible quality.",yes
+r024,4,"Easy to use and setup took minutes.",yes
+r025,2,"Slow shipping and poor packaging.",yes
+r026,5,"Support team exceeded expectations.",yes
+r027,3,"Decent quality for the price.",yes
+r028,4,"Delivery on time and product works well.",yes
+r029,1,"Too costly and support unhelpful.",yes
+r030,5,"Excellent build quality and value.",yes

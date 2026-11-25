@@ -1,0 +1,7 @@
+review_id,author_title,review_rating,review_text,review_datetime_utc
+gm-001,Anya,5,"Lovely coffee and friendly service. Easy to find with parking.",2026-11-18T10:15:00Z
+gm-002,Rahul,2,"Delivery through the app was slow and the tracking never updated.",2026-11-18T12:40:00Z
+gm-003,Mei,4,"Good food at a fair price. The new menu is easy to read.",2026-11-19T09:05:00Z
+gm-004,Diego,1,"Staff never replied to our support email about the wrong order.",2026-11-19T18:30:00Z
+gm-005,Sara,3,"Coffee quality varies; sometimes great, sometimes not.",2026-11-20T08:20:00Z
+gm-006,Tom,5,"Fast delivery and the package arrived intact. Great value.",2026-11-20T15:45:00Z

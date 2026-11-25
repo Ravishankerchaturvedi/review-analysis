@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "review-analysis"
-version = "0.1.0"
-description = "Customer review analysis you can check: themes, sentiment and complaints, each citing the review IDs behind it."
+version = "0.1.2"
+description = "Customer review analysis you can check: themes, sentiment and complaints with cited review IDs, plus converters for Google Maps, Play Store and Amazon exports."
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Ravi Shanker Chaturvedi" }]
-keywords = ["review-analysis", "customer-reviews", "sentiment-analysis", "voice-of-customer", "customer-feedback", "reputation-management", "ai-agent", "starter-agent", "citations", "nlp", "cli", "python"]
+keywords = ["review-analysis", "customer-reviews", "sentiment-analysis", "voice-of-customer", "customer-feedback", "reputation-management", "google-maps", "play-store", "amazon", "ai-agent", "starter-agent", "citations", "nlp", "cli", "python"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Environment :: Console",

@@ -6,8 +6,9 @@
 ![dependencies](https://img.shields.io/badge/dependencies-none-brightgreen)
 
 **Customer review analysis you can check.** Reviews in (CSV or JSON from Google, Amazon, app stores or your own
-forms), a report out (Markdown + JSON): themes, sentiment split, top complaints and praise, each citing the review
-IDs behind it, plus draft replies marked for a human to approve.
+forms, with built-in converters for Google Maps, Play Store and Amazon exports), a report out (Markdown + JSON):
+themes, sentiment split, top complaints and praise, each citing the review IDs behind it, plus draft replies marked
+for a human to approve.
 
 A runnable starter agent: deterministic by default, no API key needed, with an optional hook for your own LLM.
 
@@ -28,7 +29,7 @@ review-analysis analyze examples/sample_reviews.csv --out-md report.md --out-jso
 cat report.md
 ```
 
-Real output of the quickstart above (run on 2026-10-30):
+Real output of the quickstart above (run on 2026-11-25):
 
 ```
 # Review Analysis Report
@@ -73,9 +74,47 @@ Real output of the quickstart above (run on 2026-10-30):
 - product_quality: DRAFT (for human approval): We are sorry the product did not meet expectations. Please share details and photos so we can arrange a replacement or refund.
 ```
 
+## Convert vendor exports
+
+Vendor review exports use their own column names. `convert` maps them onto the canonical
+`id,rating,text` CSV (plus `author`,`date`,`source`), tagging every row with its source, so the
+analyser can read the file straight away. The vendor is auto-detected from the headers when
+`--source` is omitted; an explicit `--source` (one of `google-maps`, `play-store`, `amazon`)
+always overrides detection:
+
+```bash
+review-analysis convert examples/sample_google_maps.csv --out maps_reviews.csv
+review-analysis convert examples/sample_play_store.csv --out play_reviews.csv
+review-analysis convert examples/sample_amazon.csv --out amazon_reviews.csv
+head -3 maps_reviews.csv
+```
+
+Real output of the commands above (run on 2026-11-25):
+
+```
+converted 6 reviews from google-maps export (auto-detected) to maps_reviews.csv
+converted 6 reviews from play-store export (auto-detected) to play_reviews.csv
+converted 6 reviews from amazon export (auto-detected) to amazon_reviews.csv
+id,rating,text,author,date,source
+gm-001,5,Lovely coffee and friendly service. Easy to find with parking.,Anya,2026-11-18T10:15:00Z,google-maps
+gm-002,2,Delivery through the app was slow and the tracking never updated.,Rahul,2026-11-18T12:40:00Z,google-maps
+```
+
+Then run the Quickstart `analyze` on the converted file. Accepted columns (matched case-insensitively,
+with spaces or underscores; first match wins):
+
+- `google-maps`: id from `review_id`, rating from `review_rating`, text from `review_text`, author from `author_title`, date from `review_datetime_utc`
+- `play-store`: id from `review_id`, rating from `star_rating`, text from `review_text`, author from `author_name`, date from `review_submitted_date`
+- `amazon`: id from `review_id`, rating from `star_rating`, text from `review_body` (falls back to `review_headline` when a row has no body), author from `author`, date from `review_date`
+
+Each source also accepts generic fallbacks (`id`, `rating`, `text`, `author`, `date`), and missing id
+or text columns stop the conversion with an error naming the columns it expected. Auto-detection
+scores each vendor by its own column names and refuses to guess — headers that match no vendor,
+only generic names, or two vendors equally exit 1 and ask for `--source`.
+
 ## How it works
 
-Loads CSV or JSON reviews, normalises each review (id, rating, text), computes sentiment (rating-based or keyword fallback), groups reviews into themes by keyword, counts top complaints and praise by theme, and drafts one reply per complaint theme marked as a draft for human approval. Every theme, complaint and praise cites the real review IDs that support it.
+`convert` maps vendor column names (Google Maps, Play Store, Amazon) onto the canonical fields, tags every row with its source and writes the CSV the analyser reads. `analyze` loads CSV or JSON reviews, normalises each review (id, rating, text), computes sentiment (rating-based or keyword fallback), groups reviews into themes by keyword, counts top complaints and praise by theme, and drafts one reply per complaint theme marked as a draft for human approval. Every theme, complaint and praise cites the real review IDs that support it.
 
 ## Configuration
 
@@ -86,7 +125,12 @@ Optional LLM step: off by default. Set `REVIEW_ANALYSIS_LLM=1` and provide your 
 
 ## Use it with AI agents
 
-- Exit code `0` = report written; `1` = the input could not be read.
+- Exit code `0` = report written; `1` = the input could not be read. `convert` uses the same codes:
+  `0` = converted CSV written; `1` = unreadable input, an unknown `--source`, headers that cannot be
+  attributed to one vendor, or rows missing id/text.
+- Hand it a raw vendor export and it can convert first (`review-analysis convert in.csv --out reviews.csv` — the vendor
+  is auto-detected from the headers; pass `--source` to override), then analyse; `convert` errors name the columns it
+  expected, so an agent can fix the mapping itself.
 - `report.json` is the machine-readable form: an agent can read the top complaints and their review IDs, then
   draft fixes or replies that a human approves.
 - The repo ships a `SKILL.md`, so coding agents that read skills (for example Claude Code) can run the analysis on a
@@ -95,6 +139,7 @@ Optional LLM step: off by default. Set `REVIEW_ANALYSIS_LLM=1` and provide your 
 ## Limits
 
 - Baseline is keyword-based and deterministic; themes are coarse.
+- Vendor converters read CSV exports only; Google Takeout JSON and HTML scrapes are not supported yet.
 - Synthetic sample data only (clearly labelled in the file).
 - Draft replies are drafts; a human must approve before sending.
 

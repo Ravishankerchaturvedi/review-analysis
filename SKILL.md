@@ -10,7 +10,12 @@ description: Turn a pile of customer reviews (CSV or JSON) into a checkable repo
 - You need findings that can be checked against the original reviews.
 
 ## Steps
-1. Convert the input to CSV with `id,rating,text` (optional `author,date,source`), or JSON with the same fields.
+1. If the export uses vendor column names (Google Maps, Play Store, Amazon), convert first:
+   `review-analysis convert <export.csv> --out reviews.csv`
+   (the vendor is auto-detected from the headers; pass `--source google-maps|play-store|amazon` to override;
+   columns matched case-insensitively).
+   Exit code 0 = converted CSV written; 1 = unreadable input, unknown source, headers that cannot be
+   attributed to one vendor, or rows missing id/text.
 2. Run `review-analysis analyze <reviews.csv> --out-md report.md --out-json report.json`. Exit code 0 means the
    report was written; 1 means the input could not be read.
 3. Read `report.json`. Quote findings only with their review IDs.

@@ -10,7 +10,7 @@ forms, with built-in converters for Google Maps, Play Store and Amazon exports),
 themes, sentiment split, top complaints and praise, each citing the review IDs behind it, plus draft replies marked
 for a human to approve.
 
-A runnable starter agent: deterministic by default, no API key needed, with an optional hook for your own LLM.
+A runnable starter agent: deterministic by default, no API key needed, with an optional Ollama adapter for local-model notes.
 
 ## Problem
 
@@ -29,7 +29,7 @@ review-analysis analyze examples/sample_reviews.csv --out-md report.md --out-jso
 cat report.md
 ```
 
-Real output of the quickstart above (run on 2026-11-25):
+Real output of the quickstart above (run on 2026-11-28):
 
 ```
 # Review Analysis Report
@@ -123,6 +123,24 @@ JSON: a list of objects with the same fields, or `{"reviews": [...]}`.
 
 Optional LLM step: off by default. Set `REVIEW_ANALYSIS_LLM=1` and provide your own adapter via `REVIEW_ANALYSIS_LLM_MODULE` (a Python module exposing `enhance(report, reviews)`). No key or provider is hard-coded. If unavailable, the deterministic baseline is used.
 
+For a free local model, use the included Ollama adapter (Ollama must already be running and the model must be pulled):
+
+```bash
+REVIEW_ANALYSIS_LLM=1 \
+REVIEW_ANALYSIS_LLM_MODULE=review_analysis.ollama \
+REVIEW_ANALYSIS_OLLAMA_MODEL=llama3.2:latest \
+review-analysis analyze examples/sample_reviews.csv --out-md report.md --out-json report.json
+```
+
+The adapter asks Ollama for short notes about the top complaints, then removes any review ID that was not present in the input before writing the report. The notes remain advisory and are rendered with their supporting IDs.
+
+Real output of the adapter validation run (run on 2026-11-28, using a local HTTP test double with the same Ollama response shape):
+
+```
+## Local-model notes (cited, for human review)
+- **delivery** (r002): Check dispatch tracking.
+```
+
 ## Use it with AI agents
 
 - Exit code `0` = report written; `1` = the input could not be read. `convert` uses the same codes:
@@ -139,6 +157,7 @@ Optional LLM step: off by default. Set `REVIEW_ANALYSIS_LLM=1` and provide your 
 ## Limits
 
 - Baseline is keyword-based and deterministic; themes are coarse.
+- Ollama is optional, local-only, and its notes are suggestions; the model can still be wrong.
 - Vendor converters read CSV exports only; Google Takeout JSON and HTML scrapes are not supported yet.
 - Synthetic sample data only (clearly labelled in the file).
 - Draft replies are drafts; a human must approve before sending.

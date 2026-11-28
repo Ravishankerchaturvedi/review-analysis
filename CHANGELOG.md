@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 — 2026-11-28
+
+Added an optional Ollama adapter that appends local-model notes while validating every cited review ID.
+
 ## 0.1.2 — 2026-11-25
 
 - `convert` auto-detects the vendor (`google-maps`, `play-store`, `amazon`) from the CSV headers when

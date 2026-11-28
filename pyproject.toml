@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "review-analysis"
-version = "0.1.2"
+version = "0.1.3"
 description = "Customer review analysis you can check: themes, sentiment and complaints with cited review IDs, plus converters for Google Maps, Play Store and Amazon exports."
 readme = "README.md"
 license = { text = "MIT" }

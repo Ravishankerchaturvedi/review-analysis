@@ -92,3 +92,24 @@ def test_json_input_works(tmp_path):
     assert r.returncode == 0
     data = json.loads(out_json.read_text())
     assert data["total_reviews"] == 2
+
+
+def test_ollama_adapter_keeps_only_real_review_ids(monkeypatch):
+    from review_analysis import ollama
+
+    class Response:
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            return False
+        def read(self):
+            return json.dumps({"response": json.dumps({"ai_notes": [
+                {"theme": "delivery", "note": "Check dispatch tracking.",
+                 "review_ids": ["r002", "made-up-id"]},
+            ]})}).encode("utf-8")
+
+    monkeypatch.setattr(ollama, "urlopen", lambda *args, **kwargs: Response())
+    report = {"top_complaints": [{"theme": "delivery", "review_ids": ["r002"]}]}
+    enriched = ollama.enhance(report, [{"id": "r002", "text": "late delivery"}])
+    assert enriched["ai_notes"] == [{"theme": "delivery", "note": "Check dispatch tracking.",
+                                      "review_ids": ["r002"]}]

@@ -217,5 +217,12 @@ def render_markdown(report):
     lines.append("")
     for d in report["draft_replies"]:
         lines.append("- %s: %s" % (d["theme"], d["draft"]))
+    if report.get("ai_notes"):
+        lines.append("")
+        lines.append("## Local-model notes (cited, for human review)")
+        lines.append("")
+        for note in report["ai_notes"]:
+            lines.append("- **%s** (%s): %s" % (
+                note["theme"], ", ".join(note["review_ids"]), note["note"]))
     lines.append("")
     return "\n".join(lines)
